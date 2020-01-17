@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 import xgboost as xgb
 from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
 
 directory='data/'
 
@@ -49,6 +50,25 @@ test.columns = ['X', 'Y', 'LC_Type1_mode', 'elevation',
 
 # ML MODEL
 # TODO: For now we train on all the training dataset, we don't do a train-test split.
+
+# APPROACH: First do a classification problem to get the places which are NOT flooded, to append directly at the end
+# as 0's. With the flooded places, we will do a regression problem.
+train_classification = train.drop(['X', 'Y', 'target_2015'], axis=1)
+# Select the train_class_target, we place .copy() otherwise any modification modifies train['target_2015'] as well.
+train_classification_target = train['target_2015'].copy()
+# Replace the labels to a categorical problem.
+train_classification_target[train_classification_target > 0] = 1
+train['flooded_or_not'] = train_classification_target
+
+# Binary classification problem (Random_forest):
+RF = RandomForestClassifier(class_weight='balanced')
+RF.fit(train_classification, train_classification_target.ravel())
+pred_class = RF.predict(test.drop(['X', 'Y'], axis=1))
+# TODO: THERE IS A PROBLEM WITH IMBALANCED CLASSES (ONLY 207 FLOODED AREAS APPEAR).
+
+# Add the predictions to the test dataset as another variable for the regression algorithm
+test['flooded_or_not'] = pred_class
+
 
 # Create Pipeline
 pipeline_xgb =Pipeline(
