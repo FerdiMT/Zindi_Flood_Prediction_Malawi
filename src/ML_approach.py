@@ -48,6 +48,17 @@ test.columns = ['X', 'Y', 'LC_Type1_mode', 'elevation',
                 '-11_weeks', '-10_weeks', '-9_weeks', '-8_weeks', '-7_weeks', '-6_weeks',
                 '-5_weeks', '-4_weeks', '-3_weeks', '-2_weeks', '-1_weeks']
 
+# SUM ALL THE PRECIPITATIONS IN ONE MORE FEATURE (TOTAL PRECIPITATIONS)
+
+train['total_precipitations'] = train[['-17_weeks', '-16_weeks','-15_weeks', '-14_weeks', '-13_weeks', '-12_weeks',
+                 '-11_weeks', '-10_weeks','-9_weeks', '-8_weeks', '-7_weeks', '-6_weeks',
+                 '-5_weeks', '-4_weeks','-3_weeks', '-2_weeks', '-1_weeks']].sum(axis=1)
+
+test['total_precipitations'] = test[['-17_weeks', '-16_weeks','-15_weeks', '-14_weeks', '-13_weeks', '-12_weeks',
+                 '-11_weeks', '-10_weeks','-9_weeks', '-8_weeks', '-7_weeks', '-6_weeks',
+                 '-5_weeks', '-4_weeks','-3_weeks', '-2_weeks', '-1_weeks']].sum(axis=1)
+
+
 # ML MODEL
 # TODO: For now we train on all the training dataset, we don't do a train-test split.
 
@@ -95,7 +106,7 @@ predictions = pd.DataFrame(predictions)
 predictions[predictions < 0] = 0
 
 # Redo the predictions dataframe into the right format to submit.
-predictions.reset_index(inplace=True)
+predictions.reset_index(inplace=True, drop=True)
 submission = square_ids.join(predictions)
 submission.columns = ['Square_ID', 'target_2019']
 
