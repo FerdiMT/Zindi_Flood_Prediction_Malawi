@@ -102,7 +102,7 @@ model.compile(optimizer='adam',
 
 model.summary()
 
-model.fit(X_train, y_train, epochs=10, batch_size = 64, verbose=2, validation_data=(X_test, y_test))
+model.fit(X_train, y_train, epochs=100, batch_size = 512, verbose=2, validation_data=(X_test, y_test))
 
 # Fit model to predictions and submit.
 results_test = model.predict(test.drop(['X', 'Y'], axis=1))
