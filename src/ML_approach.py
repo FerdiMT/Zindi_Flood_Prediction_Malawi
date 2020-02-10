@@ -80,6 +80,10 @@ pred_class = RF.predict(test.drop(['X', 'Y'], axis=1))
 # Add the predictions to the test dataset as another variable for the regression algorithm
 test['flooded_or_not'] = pred_class
 
+# Create dummies on categorical variable
+train = pd.get_dummies(train, columns=['LC_Type1_mode'])
+test = pd.get_dummies(test, columns=['LC_Type1_mode'])
+
 
 # Create Pipeline
 pipeline_xgb =Pipeline(
