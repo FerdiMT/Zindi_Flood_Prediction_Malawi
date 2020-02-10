@@ -86,11 +86,11 @@ pipeline_xgb =Pipeline(
     [('xgb', xgb.XGBRegressor())
      ])
 
-# Set the parameters
+# Set the parameters: GRIDSEARCH ALREADY PERFORMED, THOSE ARE THE BEST PARAMETERS FOR THOSE VARIABLES.
 params={}
-params['xgb__learning_rate'] = [0.05, 0.08]
+params['xgb__learning_rate'] = [0.05]
 params['xgb__objective'] = ['reg:squarederror']
-params['xgb__max_depth'] = [3, 5]
+params['xgb__max_depth'] = [3]
 
 # GridSearch
 CV = GridSearchCV(pipeline_xgb, params, scoring = 'neg_mean_squared_error', n_jobs= 1, cv=3)
