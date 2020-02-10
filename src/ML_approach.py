@@ -3,6 +3,7 @@ from sklearn.pipeline import Pipeline
 import xgboost as xgb
 from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
 
 directory='data/'
 
@@ -87,7 +88,8 @@ test = pd.get_dummies(test, columns=['LC_Type1_mode'])
 
 # Create Pipeline
 pipeline_xgb =Pipeline(
-    [('xgb', xgb.XGBRegressor())
+    [('scale', StandardScaler()),
+     ('xgb', xgb.XGBRegressor())
      ])
 
 # Set the parameters: GRIDSEARCH ALREADY PERFORMED, THOSE ARE THE BEST PARAMETERS FOR THOSE VARIABLES.

@@ -13,3 +13,4 @@ https://zindi.africa/competitions/2030-vision-flood-prediction-in-malawi/
 | id_4 | DL-Baseline                             | Baseline                                                     | 0.28376     |                                                              |
 | id_5 | DL-Tuned batch_size and epochs          | Baseline with batch_size=512, 100 epochs                     | 0.14689     | Modify layers.<br />Change inputs                            |
 | id_6 | ML-Boolean vars for LC_Type1_mode       | Created boolean vars. **Does not work on the ML model (increases error).** | 0.13975     |                                                              |
+| id_7 | ML- ID_6 with Scaler                    | Used Standard Scaler in the pipeline                         | 0.14043     | Not an improvement of score.                                 |
