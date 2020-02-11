@@ -11,7 +11,7 @@ directory='data/'
 df = pd.read_csv(directory + 'Train.csv')
 sample_submission = pd.read_csv(directory + 'SampleSubmission.csv')
 
-# DATA WRANGLING
+# 1. DATA WRANGLING
 # Keeping the square ids labels for submitting results.
 square_ids = df[['Square_ID']]
 # Creating a train and a test dataset
@@ -49,7 +49,18 @@ test.columns = ['X', 'Y', 'LC_Type1_mode', 'elevation',
                 '-11_weeks', '-10_weeks', '-9_weeks', '-8_weeks', '-7_weeks', '-6_weeks',
                 '-5_weeks', '-4_weeks', '-3_weeks', '-2_weeks', '-1_weeks']
 
-# SUM ALL THE PRECIPITATIONS IN ONE MORE FEATURE (TOTAL PRECIPITATIONS)
+# 2. FEATURE CREATION
+# 2.1. Create a variable that calculates the SD within the raining variables
+# Select a list with the weekly rain columns
+weekly_rain_columns = ['-17_weeks', '-16_weeks', '-15_weeks', '-14_weeks', '-13_weeks', '-12_weeks',
+                '-11_weeks', '-10_weeks', '-9_weeks', '-8_weeks', '-7_weeks', '-6_weeks',
+                '-5_weeks', '-4_weeks', '-3_weeks', '-2_weeks', '-1_weeks']
+
+# Calculate the STD
+train['std_rainy_days'] = train[weekly_rain_columns].std(axis=1)
+test['std_rainy_days'] = test[weekly_rain_columns].std(axis=1)
+
+# 2.2. Create a variable that sums all the precipitations over the 17 weeks
 
 train['total_precipitations'] = train[['-17_weeks', '-16_weeks','-15_weeks', '-14_weeks', '-13_weeks', '-12_weeks',
                  '-11_weeks', '-10_weeks','-9_weeks', '-8_weeks', '-7_weeks', '-6_weeks',
@@ -60,8 +71,7 @@ test['total_precipitations'] = test[['-17_weeks', '-16_weeks','-15_weeks', '-14_
                  '-5_weeks', '-4_weeks','-3_weeks', '-2_weeks', '-1_weeks']].sum(axis=1)
 
 
-# ML MODEL
-# TODO: For now we train on all the training dataset, we don't do a train-test split.
+# 2.3. Create a variable that can tell us if a place has been flooded or not.
 
 # APPROACH: First do a classification problem to get the places which are NOT flooded, to append directly at the end
 # as 0's. With the flooded places, we will do a regression problem.
@@ -81,11 +91,11 @@ pred_class = RF.predict(test.drop(['X', 'Y'], axis=1))
 # Add the predictions to the test dataset as another variable for the regression algorithm
 test['flooded_or_not'] = pred_class
 
-# Create dummies on categorical variable
+# 2.4. Create dummies on categorical variable
 train = pd.get_dummies(train, columns=['LC_Type1_mode'])
 test = pd.get_dummies(test, columns=['LC_Type1_mode'])
 
-
+# 3. MACHINE LEARNING MODEL
 # Create Pipeline
 pipeline_xgb =Pipeline(
     [('scale', StandardScaler()),
@@ -104,7 +114,6 @@ CV.fit(train.drop(['X', 'Y', 'target_2015'], axis=1), train['target_2015'])
 
 
 # TEST SUBMISSION
-
 predictions = CV.predict(test.drop(['X', 'Y'], axis=1))
 predictions = pd.DataFrame(predictions)
 
