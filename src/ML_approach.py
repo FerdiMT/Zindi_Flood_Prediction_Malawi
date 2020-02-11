@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 import xgboost as xgb
 from sklearn.model_selection import GridSearchCV
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 
 directory='data/'
@@ -99,17 +99,21 @@ test = pd.get_dummies(test, columns=['LC_Type1_mode'])
 # Create Pipeline
 pipeline_xgb =Pipeline(
     [('scale', StandardScaler()),
-     ('xgb', xgb.XGBRegressor())
+     ('RandomForest', RandomForestRegressor())
      ])
 
 # Set the parameters: GRIDSEARCH ALREADY PERFORMED, THOSE ARE THE BEST PARAMETERS FOR THOSE VARIABLES.
 params={}
-params['xgb__learning_rate'] = [0.05]
-params['xgb__objective'] = ['reg:squarederror']
-params['xgb__max_depth'] = [3]
+params['RandomForest__n_estimators'] = [50]
+params['RandomForest__warm_start'] = [False]
+params['RandomForest__bootstrap'] = [True]
+params['RandomForest__min_samples_leaf'] = [1]
+params['RandomForest__min_samples_split'] = [5]
+params['RandomForest__max_depth'] = [50]
+
 
 # GridSearch
-CV = GridSearchCV(pipeline_xgb, params, scoring = 'neg_mean_squared_error', n_jobs= 1, cv=3)
+CV = GridSearchCV(pipeline_xgb, params, scoring = 'neg_mean_squared_error', n_jobs= 1, cv=3, verbose=2)
 CV.fit(train.drop(['X', 'Y', 'target_2015'], axis=1), train['target_2015'])
 
 
