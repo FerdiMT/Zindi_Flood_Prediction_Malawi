@@ -1,4 +1,7 @@
 # Zindi_Flood_Prediction_Malawi
+
+Quick ML and DL models applied to the flood prediction challenge by Zindi.
+
 https://zindi.africa/competitions/2030-vision-flood-prediction-in-malawi/
 
 #### Changelog:
